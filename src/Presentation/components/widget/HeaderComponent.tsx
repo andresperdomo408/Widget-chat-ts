@@ -1,6 +1,19 @@
-import Message from "../../../assets/conversacion.png";
+import React, { useState } from 'react';
+import Message from '../../../assets/conversacion.png';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import Modal from '../modal/ModallogoutComponent'; // Asegúrate de importar tu componente Modal correctamente
 
 const HeaderComponent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="bg-blue-500 flex w-full h-20 shadow-lg rounded-t-lg items-center">
       <div className="w-14 h-14 mb-3 rounded-full shadow-lg bg-blue-500 m-3 transform cursor-pointer">
@@ -15,6 +28,12 @@ const HeaderComponent = () => {
         <h2 className="text-white text-lg font-semibold">Agente</h2>
         <h2 className="text-white text-xs">Online</h2>
       </div>
+      {/* Utiliza el componente AiOutlineCloseCircle como un elemento React */}
+      <button onClick={openModal}>
+        <AiOutlineCloseCircle className="text-white text-2xl ml-16 mr-4 " />
+      </button>
+     
+      {isModalOpen && <Modal closeModal={closeModal} />}
     </div>
   );
 };

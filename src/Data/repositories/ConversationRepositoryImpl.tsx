@@ -15,9 +15,22 @@ export class ConversationRepositoryImpl implements ConversationRepository {
       return Promise.resolve(apiError);
     }
   }
+
   async create(name: string): Promise<ResponseConversation> {
     try {
       const response = await ApiMainBackend.post<ResponseConversation>("/conversation", { name });
+      return Promise.resolve(response.data);
+    } catch (error) {
+      let e = error as AxiosError;
+      console.log("Error: " + JSON.stringify(e.response?.data));
+      const apiError: ResponseConversation = JSON.parse(JSON.stringify(e.response?.data));
+      return Promise.resolve(apiError);
+    }
+  }
+
+  async removeByid(_id: string): Promise<ResponseConversation> {
+    try {
+      const response = await ApiMainBackend.delete<ResponseConversation>(`/conversation/delete-conversation/${_id}`);
       return Promise.resolve(response.data);
     } catch (error) {
       let e = error as AxiosError;
