@@ -1,11 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 
-import {  RemoveByIDConversationUseCase} from '../../../Domain/useCases/conversation/RemoveIDConversation';
+import { RemoveByIDConversationUseCase } from "../../../Domain/useCases/conversation/RemoveIDConversation";
+import { useDispatch, useSelector } from "react-redux";
+import { rootReducer } from "../../../Domain/storage/storage";
+import { clearChat } from "../../../Domain/storage/widget/widgetSlice";
+import { clearChatMessage } from "../../../Domain/storage/messageAutomatic/messageAutomaticSlice";
 
-const Modal = ({ closeModal }) => {
+interface ModelProps {
+  closeModal: () => void;
+}
+
+const Modal: React.FC<ModelProps> = ({ closeModal }) => {
   const [isLoading, setIsLoading] = useState(true);
   const controls = useAnimation();
+  const { _id } = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -17,29 +27,26 @@ const Modal = ({ closeModal }) => {
     return () => clearTimeout(timer);
   }, [closeModal, controls]);
 
-  // Define la función para desconectar y eliminar la conversación
   const handleDisconnect = async () => {
     try {
-      // Llama a la función removeByID para eliminar la conversación
-      await RemoveByIDConversationUseCase();
-
-      // Cierra el modal después de eliminar la conversación
-      closeModal();
+      if (_id) {
+        await RemoveByIDConversationUseCase(_id);
+        dispatch(clearChat());
+        dispatch(clearChatMessage());
+        window.location.reload();
+        closeModal();
+      }
     } catch (error) {
-      // Maneja los errores, por ejemplo, mostrando un mensaje de error al usuario
-      console.error('Error al desconectar:', error);
+      console.error("Error al desconectar:", error);
     }
   };
 
   return (
-    <div className="fixed bottom-40 right-16 z-50">
+    <div className="fixed bottom-40 right-8 md:right-20  z-50">
       <div className="modal bg-white p-2 rounded shadow-md">
         <h2 className="text-center text-lg font-semibold mb-2">¿Deseas desconectarte?</h2>
         <div className="flex justify-center mb-2">
-          <button
-            onClick={closeModal}
-            className="bg-green-500 text-white px-3 py-1 rounded mr-2"
-          >
+          <button onClick={closeModal} className="bg-green-500 text-white px-3 py-1 rounded mr-2">
             Permanecer en línea
           </button>
           <button
@@ -53,8 +60,8 @@ const Modal = ({ closeModal }) => {
       {isLoading && (
         <motion.div
           className="bg-green-500 h-2 w-full rounded-full"
-          initial={{ opacity: 1, width: '100%' }}
-          animate={{ opacity: 1, width: '0%' }}
+          initial={{ opacity: 1, width: "100%" }}
+          animate={{ opacity: 1, width: "0%" }}
           exit={{ opacity: 0 }}
           transition={{ duration: 10 }}
         />

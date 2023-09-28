@@ -68,6 +68,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   const getByIdChatMessages = async () => {
     if (_id) {
       const result = await GetByIDConversationUseCase(_id!);
+      console.log(result.conversation);
       setChatMessages((prevMessages) => [...prevMessages, ...result.conversation]);
     }
   };
@@ -135,24 +136,40 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
     if (selectedImage) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const base64Data = event.target?.result as string;
-        socket.emit("image-upload", base64Data);
-        setChatMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            image: selectedImage,
+        if (event.target?.result) {
+          const base64Data = event.target.result.toString();
+          socket.emit("image-upload", {
+            _id,
+            base64Data,
             name: selectedImage.name,
             from: "user",
             text: userMessage,
-          },
-        ]);
+          });
+          setChatMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              image: selectedImage,
+              name: selectedImage.name,
+              from: "user",
+              text: userMessage,
+            },
+          ]);
+        }
       };
       reader.readAsDataURL(selectedImage);
     } else if (selectedFile) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const base64Data = event.target?.result as string;
-        socket.emit("file-upload", base64Data);
+        const base64Data = event.target?.result;
+        socket.emit("file-upload", {
+          _id,
+          base64Data,
+          icon: selectedFile.type,
+          name: selectedFile.name,
+          from: "user",
+          file: selectedFile,
+          text: userMessage,
+        });
 
         setChatMessages((prevMessages) => [
           ...prevMessages,

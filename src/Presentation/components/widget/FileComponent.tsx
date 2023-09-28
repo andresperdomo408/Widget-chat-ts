@@ -2,13 +2,14 @@ import React from "react";
 import { AiFillFilePdf, AiFillFileExcel, AiFillFileWord, AiFillFileText, AiFillFile } from "react-icons/ai";
 
 interface FileProps {
-  file: File;
+  file: string | File;
   name: string;
+  icon: string;
 }
 
-const FileComponent: React.FC<FileProps> = ({ file, name }) => {
+const FileComponent: React.FC<FileProps> = ({ file, name, icon }) => {
   const getFileIcon = () => {
-    const fileType = file.type;
+    const fileType = icon;
 
     if (fileType === "application/pdf") {
       return <AiFillFilePdf color="red" size={30} />;
@@ -29,9 +30,9 @@ const FileComponent: React.FC<FileProps> = ({ file, name }) => {
     <div className="flex flex-row justify-center items-center text-center">
       {fileIcon}
       <a
-        href={URL.createObjectURL(file)} // Establece el enlace al archivo
-        download={file.name} // Establece el atributo "download" para permitir la descarga
-        className="text-blue-500" // Agrega estilos para el enlace
+        href={typeof file === "string" ? file : URL.createObjectURL(file)}
+        download={file}
+        className="text-blue-500"
         style={{ wordWrap: "break-word", maxWidth: "20ch" }}
       >
         {name}

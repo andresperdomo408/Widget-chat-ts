@@ -2,7 +2,7 @@ import React from "react";
 import { BsRobot } from "react-icons/bs";
 
 interface IconProps {
-  icon: string | undefined;
+  icon: string | File | undefined;
 }
 
 const IconComponent: React.FC<IconProps> = ({ icon }) => {

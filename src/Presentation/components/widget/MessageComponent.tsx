@@ -21,7 +21,7 @@ const MessageComponent: React.FC<MessageProps> = ({ message }) => {
           className={`bg-white p-1 my-1 rounded-t-lg ${message.from !== "user" ? "rounded-r-lg" : "rounded-l-lg"}`}
           style={{ whiteSpace: "pre-wrap" }}
         >
-          {message.icon && <FileComponent file={message.file!} name={message.name!} />}
+          {message.icon && <FileComponent file={message.file!} name={message.name!} icon={message.icon!} />}
           {message.image && <ImageComponent image={message.image} name={message.name!} />}
           {message.text && <TextComponent text={message.text} />}
         </div>

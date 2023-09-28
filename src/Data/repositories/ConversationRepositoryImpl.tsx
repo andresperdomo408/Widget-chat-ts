@@ -28,7 +28,7 @@ export class ConversationRepositoryImpl implements ConversationRepository {
     }
   }
 
-  async removeByid(_id: string): Promise<ResponseConversation> {
+  async removeById(_id: string): Promise<ResponseConversation> {
     try {
       const response = await ApiMainBackend.delete<ResponseConversation>(`/conversation/delete-conversation/${_id}`);
       return Promise.resolve(response.data);
