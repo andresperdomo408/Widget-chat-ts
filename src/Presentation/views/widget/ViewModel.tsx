@@ -209,3 +209,4 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 };
 
 export default WidgetModel;
+
