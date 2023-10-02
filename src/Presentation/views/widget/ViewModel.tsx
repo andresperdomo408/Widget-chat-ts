@@ -8,7 +8,7 @@ import { initial } from "../../../Domain/storage/messageAutomatic/messageAutomat
 
 const WidgetModel = (messagesDiv: HTMLElement | null) => {
   //Redux
-  const { status, _id } = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
+  const data = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
   const { welcome } = useSelector((state: ReturnType<typeof rootReducer>) => state.messageAutomaticState);
   const dispatch = useDispatch();
 
@@ -54,7 +54,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 
   // Toggle Chat
   const toggleChat = () => {
-    if (!status) {
+    if (!data.status) {
       return setShowChatForm(!showChatForm);
     }
     setShowChat(!showChat);
@@ -66,8 +66,8 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   };
 
   const getByIdChatMessages = async () => {
-    if (_id) {
-      const result = await GetByIDConversationUseCase(_id!);
+    if (data._id) {
+      const result = await GetByIDConversationUseCase(data._id!);
       console.log(result.conversation);
       setChatMessages((prevMessages) => [...prevMessages, ...result.conversation]);
     }
@@ -76,7 +76,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   // Bot set Messages
   useEffect(() => {
     if (showChat && !welcome) {
-      socket.emit("chat-message", { _id, text: "¡Hola bienvenido!", from: "bot" });
+      socket.emit("chat-message", { _id: data._id, text: "¡Hola bienvenido!", from: "bot" });
       setChatMessages((prevMessages) => [...prevMessages, { text: "¡Hola bienvenido!", from: "bot" }]);
       dispatch(initial());
     }
@@ -139,7 +139,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
         if (event.target?.result) {
           const base64Data = event.target.result.toString();
           socket.emit("image-upload", {
-            _id,
+            _id: data._id,
             base64Data,
             name: selectedImage.name,
             from: "user",
@@ -162,7 +162,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       reader.onload = (event) => {
         const base64Data = event.target?.result;
         socket.emit("file-upload", {
-          _id,
+          _id: data._id,
           base64Data,
           icon: selectedFile.type,
           name: selectedFile.name,
@@ -178,7 +178,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       };
       reader.readAsDataURL(selectedFile);
     } else {
-      socket.emit("chat-message", { _id, text: userMessage, from: "user" });
+      socket.emit("chat-message", { _id: data._id, text: userMessage, from: "user", user: data });
       setChatMessages((prevMessages) => [...prevMessages, { text: userMessage, from: "user" }]);
     }
 
