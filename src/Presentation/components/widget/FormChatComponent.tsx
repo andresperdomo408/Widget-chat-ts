@@ -2,7 +2,6 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import FooterComponent from "./FooterComponent";
 import { InitialUserForm } from "../../utils/UserFormValidation";
 import countryCodeData from "../../../../countryCode.json";
-import Message from "../../../assets/conversacion.png";
 import { useDispatch } from "react-redux";
 import { widgetForm } from "../../../Domain/storage/widget/thunk";
 import { FormChatInterface } from "../../../Domain/entities/FormChat";
@@ -68,7 +67,7 @@ const FormChatComponent = ({ toggleChatForm }: { toggleChatForm: () => void }) =
                     >
                       {countries.map((country) => (
                         <option key={country.code} value={country.dial_code}>
-                          {` ${country.name}`}
+                          {`  ${country.name}`}
                         </option>
                       ))}
                     </Field>

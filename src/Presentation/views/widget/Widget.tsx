@@ -5,6 +5,8 @@ import HeaderComponent from "../../components/widget/HeaderComponent";
 import FooterComponent from "../../components/widget/FooterComponent";
 import FormComponent from "../../components/widget/FormComponent";
 import FormChatComponent from "../../components/widget/FormChatComponent";
+import IconComponent from "../../components/widget/IconComponent";
+import TextComponent from "../../components/widget/TextComponent";
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import React, { useState } from "react";
@@ -36,6 +38,7 @@ const WidgetView = () => {
   };
 
   const messagesDiv = document.getElementById("messages");
+
   const {
     messagesEndRef,
     isFileLoaded,
@@ -44,7 +47,9 @@ const WidgetView = () => {
     showChat,
     showChatForm,
     chatMessages,
+    receivedChatMessages,
     hiddenButtons,
+    buttonOptions,
     getByIdChatMessages,
     setUserMessage,
     toggleChatForm,
@@ -58,9 +63,18 @@ const WidgetView = () => {
   useEffect(() => {
     getByIdChatMessages();
   }, []);
+  
+ // Define un estilo para el mensaje con un fondo gris y texto más grande
+ const messageStyle = {
+  backgroundColor: "white",
+  fontSize: "1.0rem", // Texto un poco más grande
+  boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.1)", // Sombra
+   // Fondo gris
+
+};
 
   return (
-    <div className="fixed bottom-10 right-0   flex flex-col justify-end items-end h-screen w-screen">
+    <div className="fixed bottom-10 right-0 flex flex-col justify-end items-end h-screen w-screen">
       {showChatForm && <FormChatComponent toggleChatForm={toggleChatForm} />}
       <AnimatePresence>
         {showChat && (
@@ -71,7 +85,7 @@ const WidgetView = () => {
             exit="hidden"
             variants={chatVariants}
           >
-            <HeaderComponent showChat={showChat} />
+            <HeaderComponent/>
             <motion.div
               initial="hidden"
               animate="visible"
@@ -86,6 +100,39 @@ const WidgetView = () => {
                 {chatMessages.map((message, index) => (
                   <MessageComponent key={index} message={message} />
                 ))}
+               
+               {receivedChatMessages.map((message, index) => (
+  <div key={index}>
+    <div style={{ maxWidth: "100%", wordWrap: "break-word", marginBottom: "10px" }}>
+      <div className={`flex items-center space-x-1 ${message.from === "user" && "justify-end"}`}>
+        {message.from !== "user" && <IconComponent icon={message.icon} />}
+        <h1 className="text-sm font-light">{message.from !== "user" ? "Chatbot" : "You"}</h1>
+      </div>
+      <div className={`p-3 my-2 rounded-lg ${message.from !== "user" ? "rounded-r-lg" : "rounded-l-lg"}`} style={{ ...messageStyle, whiteSpace: "pre-wrap" }}>
+        {message.text && <TextComponent text={message.text}/>}
+        {/* Agregar botones dinámicos aquí */}
+       
+      </div>
+      {buttonOptions.map((option) => (
+  <div className="mb-5 bg-white rounded-lg shadow-md">
+    <button 
+      key={option.key}
+      className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded"
+      onClick={() => {
+        // Puedes realizar alguna acción con el botón aquí si es necesario
+        console.log(`Botón presionado: ${option.label}`);
+      }}
+    >
+      {option.label}
+    </button>
+  </div>
+))}
+
+
+    </div>
+  </div>
+))}
+
               </div>
               <div className="flex items-center space-x-5 p-5">
                 <FormComponent
@@ -110,7 +157,7 @@ const WidgetView = () => {
           className="w-15 h-14 mb-3 rounded-full shadow-lg bg-blue-500 m- transform hover:animate-jump cursor-pointer"
           onClick={toggleChat}
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity:2 , scale: 1 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.0 }}
         >
           <img

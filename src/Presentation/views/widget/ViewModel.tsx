@@ -7,7 +7,7 @@ import { GetByIDConversationUseCase } from "../../../Domain/useCases/conversatio
 import { initial } from "../../../Domain/storage/messageAutomatic/messageAutomaticSlice";
 
 const WidgetModel = (messagesDiv: HTMLElement | null) => {
-  //Redux
+  // Redux
   const { status, _id } = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
   const { welcome } = useSelector((state: ReturnType<typeof rootReducer>) => state.messageAutomaticState);
   const dispatch = useDispatch();
@@ -18,6 +18,9 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 
   // Chat Messages
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+  const [receivedChatMessages, setReceivedChatMessages] = useState([]);
+  const [buttonOptions, setButtonOptions] = useState([]); // Corregido el nombre de la variable
+
   const [userMessage, setUserMessage] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -30,11 +33,47 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   const [isFileLoaded, setIsFileLoaded] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  /* 
-  
-   SOCKET MANAGE ALL TYPES MESSAGES 
+  // Función para manejar las opciones extraídas
+  const handleReceivedResponse = (response) => {
 
+    
+        // Recorrer otros tipos de nodos (por ejemplo, "MESSAGE") y hacer lo que necesites con ellos
+    ;
+    
+    if (response.nodes && Array.isArray(response.nodes)) {
+      const extractedOptionsNode = response.nodes.find(
+        (node) => node.type === "OPTION"
+      );
+
+      if (extractedOptionsNode && extractedOptionsNode.options) {
+        // Extraer las opciones y almacenarlas en el estado
+        const extractedOptions = extractedOptionsNode.options;
+        setButtonOptions(extractedOptions); // Corregido el nombre de la función
+        console.log(extractedOptions); // Aquí verás las opciones en la consola
+
+        const extractedTexts = response.nodes
+        .filter((node) => node.type === "MESSAGE")
+        .map((node) => {
+          if (node.text && Array.isArray(node.text) && node.text.length > 0) {
+            return node.text[0];
+          }
+          return "";
+        });
+  
+      const newMessages = extractedTexts.map((text) => ({ text, from: "bot" }));
+      setReceivedChatMessages((prevMessages) => [...prevMessages, ...newMessages]);
+    }
+      }
+    }
+  
+
+  /* 
+   SOCKET MANAGE ALL TYPES MESSAGES 
   */
+  useEffect(() => {
+    socket.on("chat-bot-response", handleReceivedResponse);
+    // ... otros eventos y lógica para socket.on ...
+  }, []);
 
   useEffect(() => {
     socket.connect();
@@ -72,15 +111,6 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       setChatMessages((prevMessages) => [...prevMessages, ...result.conversation]);
     }
   };
-
-  // Bot set Messages
-  useEffect(() => {
-    if (showChat && !welcome) {
-      socket.emit("chat-message", { _id, text: "¡Hola bienvenido!", from: "bot" });
-      setChatMessages((prevMessages) => [...prevMessages, { text: "¡Hola bienvenido!", from: "bot" }]);
-      dispatch(initial());
-    }
-  }, [showChat]);
 
   // Calculate to high total of box from messages
   useEffect(() => {
@@ -196,7 +226,9 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
     showChat,
     showChatForm,
     chatMessages,
+    receivedChatMessages,
     hiddenButtons,
+    buttonOptions,
     getByIdChatMessages,
     setUserMessage,
     toggleChatForm,

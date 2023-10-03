@@ -77,17 +77,18 @@ const FormComponent: React.FC<FormComponentProps> = ({
               onClick={toggleButtons}
             />
           </label>
-          
           {isEmojiPickerVisible && (
-            <div className="absolute right-0 transform translate-x-1/3 bottom-14">
-              <div className="bg-white rounded-lg p-1">
-                <EmojiPicker
-                  onEmojiClick={handleEmojiClick}
-                  pickerStyle={{ width: '100px', height: '200px' }}
-                />
-              </div>
-            </div>
-          )}
+  <div className="absolute right-0 transform translate-x-1/4 bottom-12 ">
+    <div className="bg-white rounded-lg p-1">
+      <EmojiPicker
+        onEmojiClick={handleEmojiClick}
+        pickerStyle={{ width: '30px !important', height: '30px !important' }}
+      />
+    </div>
+  </div>
+)}
+
+
         </div>
 
         {hiddenButtons && (
