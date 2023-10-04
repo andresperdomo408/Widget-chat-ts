@@ -10,6 +10,20 @@ export const InitialUserForm = yup.object().shape({
     .max(30, "El nombre debe tener maximo de 30 caracteres")
     .required("Este campo es obligatorio"),
   email: yup.string().email("Ingresa un correo electrónico válido").trim().required("Este campo es obligatorio"),
-  phoneNumber: yup.string().matches(phoneRegExp, "Número de teléfono no válido").required("Este campo es obligatorio"),
-  identificationCard: yup.string().matches(phoneRegExp, "La Cedula no es valida").required("Este campo es obligatorio"),
+  phoneNumber: yup
+    .string()
+    .matches(phoneRegExp, "Número de teléfono no válido")
+    .required("Este campo es obligatorio")
+    .test("is-ten-digits", "El número de teléfono debe tener 10 dígitos", (value: string) => {
+      const numericValue = value.replace(/\D/g, "");
+      return numericValue.length === 10;
+    }),
+  identificationCard: yup
+    .string()
+    .matches(phoneRegExp, "La Cedula no es valida")
+    .required("Este campo es obligatorio")
+    .test("is-ten-digits", "Número no valido", (value: string) => {
+      const numericValue = value.replace(/\D/g, "");
+      return numericValue.length > 7;
+    }),
 });

@@ -6,8 +6,8 @@ interface TextProps {
 
 const TextComponent: React.FC<TextProps> = ({ text }) => {
   return (
-    <p className="text-sl font-white" style={{ wordWrap: "break-word", maxWidth: "20ch" }}>
-   {text}
+    <p className="text-xs font-white" style={{ wordWrap: "break-word", maxWidth: "35ch" }}>
+      {text}
     </p>
   );
 };

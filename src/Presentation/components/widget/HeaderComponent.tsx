@@ -1,14 +1,14 @@
 import { useState } from "react";
-import React from 'react'; // Asegúrate de importar React
+import React from "react";
 import Message from "../../../assets/conversacion.png";
 import { AiOutlineCloseCircle, AiOutlineMinusCircle } from "react-icons/ai";
 import Modal from "../modal/ModallogoutComponent";
 
 interface HeaderComponentProps {
-  showChat: (value: boolean) => void; 
+  toggleChat: () => void;
 }
 
-const HeaderComponent: React.FC<HeaderComponentProps> = () => {
+const HeaderComponent: React.FC<HeaderComponentProps> = ({ toggleChat }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => {
@@ -33,11 +33,16 @@ const HeaderComponent: React.FC<HeaderComponentProps> = () => {
         <h2 className="text-white text-lg font-semibold">Agente</h2>
         <h2 className="text-white text-xs">Online</h2>
       </div>
-     
-      {/* Botón de cerrar */}
-      <button onClick={openModal}>
-        <AiOutlineCloseCircle className="text-white text-2xl ml-20" />
-      </button>
+
+      {/* Buttons */}
+      <div className="absolute right-2">
+        <button onClick={toggleChat}>
+          <AiOutlineMinusCircle className="text-white text-2xl" />
+        </button>
+        <button onClick={openModal}>
+          <AiOutlineCloseCircle className="text-white text-2xl" />
+        </button>
+      </div>
       {isModalOpen && <Modal closeModal={closeModal} />}
     </div>
   );

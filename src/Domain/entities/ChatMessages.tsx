@@ -6,6 +6,24 @@ export interface ChatMessage {
   from: string;
   icon?: string;
   file?: string | File;
+  nodes?: Nodes[];
+  author?: string;
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface Nodes {
+  id: string;
+  type: string;
+  skip: boolean;
+  text: string;
+  next: string;
+  validationMessage: string;
+  options: Options[];
+}
+
+export interface Options {
+  key: string;
+  label: string;
+  value: string;
 }

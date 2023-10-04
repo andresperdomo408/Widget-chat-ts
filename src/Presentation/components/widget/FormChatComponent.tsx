@@ -12,8 +12,8 @@ const FormChatComponent = ({ toggleChatForm }: { toggleChatForm: () => void }) =
 
   return (
     <div className="fixed bottom-0 right-0 p-14 md:right- max-w-md ">
-    <div className="flex flex-col static  scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrolling-touch max-h-auto  bg-blue-500 rounded-t-lg">
-      <div className="bg-white rounded sm:shadow-lg py-5  px-2 md:px-4">
+      <div className="flex flex-col static  scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrolling-touch max-h-auto  bg-blue-500 rounded-b-2xl ">
+        <div className="bg-white sm:shadow-lg py-5  px-2 md:px-4">
           <div className="mb-1 flex flex-col">
             <div className="flex items-center mb-4 ml-5">
               <h1 className="text-gray-600 text-xm font-bold">
@@ -63,11 +63,11 @@ const FormChatComponent = ({ toggleChatForm }: { toggleChatForm: () => void }) =
                     <Field
                       as="select"
                       name="countryCode"
-                      className="mt-1 pl-6  block w-32 border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0 "
+                      className="mt-1 text-center w-32 border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0 "
                     >
                       {countries.map((country) => (
-                        <option key={country.code} value={country.dial_code}>
-                          {`  ${country.name}`}
+                        <option key={country.code} value={country.dial_code} className="custom-option">
+                          {`${country.emoji}${country.dial_code}`}
                         </option>
                       ))}
                     </Field>
@@ -75,7 +75,7 @@ const FormChatComponent = ({ toggleChatForm }: { toggleChatForm: () => void }) =
                       type="text"
                       name="phoneNumber"
                       placeholder="Número Celular"
-                      className="mt-1 pl-4  block w-full border-none bg-gray-100 h-12 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0"
+                      className="mt-1 pl-4 block w-full border-none bg-gray-100 h-12 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0"
                     />
                   </div>
                   <ErrorMessage
@@ -104,15 +104,11 @@ const FormChatComponent = ({ toggleChatForm }: { toggleChatForm: () => void }) =
                   </div>
                 </Form>
               )}
-          
             </Formik>
-          
           </div>
-
         </div>
-        <FooterComponent/>
+        <FooterComponent />
       </div>
-  
     </div>
   );
 };

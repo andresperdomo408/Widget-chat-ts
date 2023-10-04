@@ -1,3 +1,5 @@
+import { Nodes } from "../../../../Domain/entities/ChatMessages";
+
 export interface ResponseConversation {
   _id?: string;
   name: string;
@@ -14,6 +16,7 @@ export interface Conversation {
   from: string;
   icon?: string;
   file?: string;
+  nodes?: Nodes[];
   createdAt: Date;
   updatedAt: Date;
 }

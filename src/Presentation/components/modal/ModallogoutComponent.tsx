@@ -42,7 +42,7 @@ const Modal: React.FC<ModelProps> = ({ closeModal }) => {
   };
 
   return (
-    <div className="fixed bottom-40 right-8 md:right-20  z-50">
+    <div className="fixed bottom-60 md:bottom-40 right-12 md:right-28  z-50">
       <div className="modal bg-white p-2 rounded shadow-md">
         <h2 className="text-center text-lg font-semibold mb-2">¿Deseas desconectarte?</h2>
         <div className="flex justify-center mb-2">

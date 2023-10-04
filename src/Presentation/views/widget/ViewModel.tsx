@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { rootReducer } from "../../../Domain/storage/storage";
 import { GetByIDConversationUseCase } from "../../../Domain/useCases/conversation/GetByIDConversation";
 import { initial } from "../../../Domain/storage/messageAutomatic/messageAutomaticSlice";
+import { UpdateConversationUseCase } from "../../../Domain/useCases/conversation/UpdateConversation";
 
 const WidgetModel = (messagesDiv: HTMLElement | null) => {
-  // Redux
-  const { status, _id } = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
+  //Redux
+  const data = useSelector((state: ReturnType<typeof rootReducer>) => state.widgetState);
   const { welcome } = useSelector((state: ReturnType<typeof rootReducer>) => state.messageAutomaticState);
   const dispatch = useDispatch();
 
@@ -18,9 +19,6 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 
   // Chat Messages
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [receivedChatMessages, setReceivedChatMessages] = useState([]);
-  const [buttonOptions, setButtonOptions] = useState([]); // Corregido el nombre de la variable
-
   const [userMessage, setUserMessage] = useState("");
   const messagesEndRef = useRef(null);
 
@@ -33,53 +31,21 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   const [isFileLoaded, setIsFileLoaded] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  // Función para manejar las opciones extraídas
-  const handleReceivedResponse = (response) => {
-
-    
-        // Recorrer otros tipos de nodos (por ejemplo, "MESSAGE") y hacer lo que necesites con ellos
-    ;
-    
-    if (response.nodes && Array.isArray(response.nodes)) {
-      const extractedOptionsNode = response.nodes.find(
-        (node) => node.type === "OPTION"
-      );
-
-      if (extractedOptionsNode && extractedOptionsNode.options) {
-        // Extraer las opciones y almacenarlas en el estado
-        const extractedOptions = extractedOptionsNode.options;
-        setButtonOptions(extractedOptions); // Corregido el nombre de la función
-        console.log(extractedOptions); // Aquí verás las opciones en la consola
-
-        const extractedTexts = response.nodes
-        .filter((node) => node.type === "MESSAGE")
-        .map((node) => {
-          if (node.text && Array.isArray(node.text) && node.text.length > 0) {
-            return node.text[0];
-          }
-          return "";
-        });
-  
-      const newMessages = extractedTexts.map((text) => ({ text, from: "bot" }));
-      setReceivedChatMessages((prevMessages) => [...prevMessages, ...newMessages]);
-    }
-      }
-    }
-  
-
   /* 
+  
    SOCKET MANAGE ALL TYPES MESSAGES 
+
   */
-  useEffect(() => {
-    socket.on("chat-bot-response", handleReceivedResponse);
-    // ... otros eventos y lógica para socket.on ...
-  }, []);
 
   useEffect(() => {
     socket.connect();
 
-    socket.on("chat-message-response", (message) => {
-      setChatMessages((prevMessages) => [...prevMessages, { text: message, from: "bot" }]);
+    socket.on("chat-message-response", async (message) => {
+      setChatMessages((prevMessages) => [...prevMessages, { nodes: message, from: "bot" }]);
+      const from = "bot";
+      if (data._id) {
+        await UpdateConversationUseCase(data._id!, from, message);
+      }
     });
 
     socket.on("file-upload-response", (response) => {
@@ -93,7 +59,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 
   // Toggle Chat
   const toggleChat = () => {
-    if (!status) {
+    if (!data.status) {
       return setShowChatForm(!showChatForm);
     }
     setShowChat(!showChat);
@@ -105,12 +71,28 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   };
 
   const getByIdChatMessages = async () => {
-    if (_id) {
-      const result = await GetByIDConversationUseCase(_id!);
-      console.log(result.conversation);
+    if (data._id) {
+      const result = await GetByIDConversationUseCase(data._id!);
       setChatMessages((prevMessages) => [...prevMessages, ...result.conversation]);
+      console.log(result.conversation);
     }
   };
+
+  // Bot set Messages
+  useEffect(() => {
+    if (showChat && !welcome) {
+      socket.emit("chat-message", {
+        _id: data._id,
+        text: "¡Escribe un mensaje para iniciar al conversación.!",
+        from: "bot",
+      });
+      setChatMessages((prevMessages) => [
+        ...prevMessages,
+        { text: "¡Escribe un mensaje para iniciar al conversación.!", from: "bot" },
+      ]);
+      dispatch(initial());
+    }
+  }, [showChat]);
 
   // Calculate to high total of box from messages
   useEffect(() => {
@@ -169,7 +151,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
         if (event.target?.result) {
           const base64Data = event.target.result.toString();
           socket.emit("image-upload", {
-            _id,
+            _id: data._id,
             base64Data,
             name: selectedImage.name,
             from: "user",
@@ -192,7 +174,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       reader.onload = (event) => {
         const base64Data = event.target?.result;
         socket.emit("file-upload", {
-          _id,
+          _id: data._id,
           base64Data,
           icon: selectedFile.type,
           name: selectedFile.name,
@@ -208,7 +190,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       };
       reader.readAsDataURL(selectedFile);
     } else {
-      socket.emit("chat-message", { _id, text: userMessage, from: "user" });
+      socket.emit("chat-message", { _id: data._id, text: userMessage, from: "user", user: data });
       setChatMessages((prevMessages) => [...prevMessages, { text: userMessage, from: "user" }]);
     }
 
@@ -226,9 +208,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
     showChat,
     showChatForm,
     chatMessages,
-    receivedChatMessages,
     hiddenButtons,
-    buttonOptions,
     getByIdChatMessages,
     setUserMessage,
     toggleChatForm,
@@ -241,4 +221,3 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
 };
 
 export default WidgetModel;
-

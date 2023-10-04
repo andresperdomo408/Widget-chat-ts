@@ -5,22 +5,19 @@ import IconComponent from "./IconComponent";
 import ImageComponent from "./ImageComponent";
 import TextComponent from "./TextComponent";
 import FileComponent from "./FileComponent";
+import NodesComponent from "./NodesComponent";
 
 interface MessageProps {
   message: ChatMessage;
 }
 
 const MessageComponent: React.FC<MessageProps> = ({ message }) => {
-  // Define una clase CSS basada en el remitente del mensaje
   const messageClass = message.from === "user" ? "self-end" : "self-start";
 
-  // Define un estilo para el mensaje con un fondo gris y texto más grande
   const messageStyle = {
     backgroundColor: "white",
-    fontSize: "1.0rem", // Texto un poco más grande
-    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.1)", // Sombra
-     // Fondo gris
-
+    fontSize: "1.0rem",
+    boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.1)",
   };
 
   return (
@@ -36,7 +33,8 @@ const MessageComponent: React.FC<MessageProps> = ({ message }) => {
         >
           {message.icon && <FileComponent file={message.file!} name={message.name!} icon={message.icon!} />}
           {message.image && <ImageComponent image={message.image} name={message.name!} />}
-          {message.text && <TextComponent text={message.text}/>}
+          {message.text && <TextComponent text={message.text} />}
+          {message.nodes && message.nodes.length > 0 && <NodesComponent nodes={message.nodes} />}
         </div>
       </div>
     </div>
