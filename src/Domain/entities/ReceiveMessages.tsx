@@ -6,7 +6,7 @@ export interface receivedChatMessage {
     from: string;
     icon?: string;
     file?: string | File;
-    createdAt?: Date;
+    createdAt?: Date | string;
     updatedAt?: Date;
     __v?: number;
   }

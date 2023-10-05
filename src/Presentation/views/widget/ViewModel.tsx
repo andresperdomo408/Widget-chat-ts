@@ -35,7 +35,11 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
   
    SOCKET MANAGE ALL TYPES MESSAGES 
 
-  */
+  */const handleOptionClick = (optionValue: string) => {
+    // You can now access the selected option value here and use it as needed
+    console.log(`Selected option: ${optionValue}`);
+    // Perform any other actions with the selected option value in your view model
+  };
 
   useEffect(() => {
     socket.connect();
@@ -191,13 +195,20 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
       reader.readAsDataURL(selectedFile);
     } else {
       socket.emit("chat-message", { _id: data._id, text: userMessage, from: "user", user: data });
-      setChatMessages((prevMessages) => [...prevMessages, { text: userMessage, from: "user" }]);
+      const date = new Date().toISOString()
+      setChatMessages((prevMessages) => [...prevMessages, { text: userMessage, from: "user" , createdAt:date}]);
     }
 
     setUserMessage("");
     setSelectedImage(null);
     setSelectedFile(null);
   };
+
+const buttonResponse =(event:string)=> {
+
+  socket.emit("chat-message", { _id: data._id, text: event , from: "user", user: data });
+      setChatMessages((prevMessages) => [...prevMessages, { text: event, from: "user" }]);
+}
 
   return {
     socket,
@@ -209,6 +220,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
     showChatForm,
     chatMessages,
     hiddenButtons,
+    buttonResponse,
     getByIdChatMessages,
     setUserMessage,
     toggleChatForm,
@@ -217,6 +229,7 @@ const WidgetModel = (messagesDiv: HTMLElement | null) => {
     handleFileChange,
     handleImageChange,
     handleFormSubmit,
+    handleOptionClick,
   };
 };
 

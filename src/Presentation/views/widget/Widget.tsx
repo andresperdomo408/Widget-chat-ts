@@ -54,6 +54,7 @@ const WidgetView = () => {
     handleFileChange,
     handleImageChange,
     handleFormSubmit,
+    buttonResponse,
   } = useViewModel(messagesDiv);
 
   useEffect(() => {
@@ -80,7 +81,12 @@ const WidgetView = () => {
               >
                 <div ref={messagesEndRef}></div>
                 {chatMessages.map((message, index) => (
-                  <MessageComponent key={index} message={message} />
+                       <MessageComponent
+                       key={index}
+                       message={message}
+                       buttonResponse={buttonResponse}
+                     />
+                     
                 ))}
               </div>
               <div className="flex items-center space-x-5 p-5">

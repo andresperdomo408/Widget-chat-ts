@@ -8,7 +8,7 @@ export interface ChatMessage {
   file?: string | File;
   nodes?: Nodes[];
   author?: string;
-  createdAt?: Date;
+  createdAt?: Date | string;
   updatedAt?: Date;
 }
 

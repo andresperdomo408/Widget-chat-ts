@@ -3,9 +3,11 @@ import TextComponent from "./TextComponent";
 
 interface NodeProps {
   nodes: Nodes[];
+  buttonResponse: (event: string) => void
+
 }
 
-const NodesComponent: React.FC<NodeProps> = ({ nodes }) => {
+const NodesComponent: React.FC<NodeProps> = ({ nodes, buttonResponse }) => {
   return (
     <>
       {nodes.map((node: Nodes, index: number) => (
@@ -19,7 +21,8 @@ const NodesComponent: React.FC<NodeProps> = ({ nodes }) => {
                     <button
                       className="w-full bg-blue-500 hover:bg-blue-700 text-white text-xs font-sans py-1 px-4 rounded"
                       onClick={() => {
-                        console.log(`Botón presionado: ${option.label}`);
+                        // Llama a la función de manejo de clics con el valor de la opción
+                        buttonResponse(option.value);
                       }}
                     >
                       {option.label}
@@ -34,5 +37,6 @@ const NodesComponent: React.FC<NodeProps> = ({ nodes }) => {
     </>
   );
 };
+
 
 export default NodesComponent;
